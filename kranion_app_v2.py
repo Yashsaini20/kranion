@@ -1342,7 +1342,7 @@ while(i<2):
         #print(len(temp_input))
         lst_output.extend(yhat.tolist())
         i=i+1
-st.write(math.sqrt("Mean squared Error in test prediction",mean_squared_error(y_test,test_predict)))
+st.write("Mean squared Error in test prediction",math.sqrt(mean_squared_error(y_test,test_predict)))
 for i in lst_output:
   st.write("{} Predicted time: {}".format(lst_output.index(i)+1,i[0]*100))
 
