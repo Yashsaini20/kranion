@@ -45,13 +45,13 @@ st.subheader('**Upload Cycles Data**')
 st.write('***Data format***') 
 st.write('Data file should be .csv file and has only *two column*, *without column names*')
 uploaded_file = st.file_uploader(" ",key="cycle_data")
-st.write("!!!!UPLOAD FILE TO AVOID ERROR!!!!")
+st.write("***!!!!UPLOAD FILE TO AVOID ERROR!!!!***")
 st.subheader('**Upload Points Data**')
 st.write('***Data format***') 
 st.write('Data file should be .csv file and has a total of *6 columns*, *without column names*')
 
 uploaded_file2 = st.file_uploader(" ", key="points_data")
-st.write("!!!!UPLOAD FILE TO AVOID ERROR!!!!")
+st.write("***!!!!UPLOAD FILE TO AVOID ERROR!!!!***")
 
 if uploaded_file is not None:
 
@@ -781,20 +781,22 @@ if st.button('Download Player Details as excel'):
 
 #player_details['no_of_times_played'].sum() #it should be equal to the total no. of rows in df
 
-st.header('**Insights**')
+st.header('**Overall Insights**')
 st.write("**Total no. of players:**", len(player_details))
 st.write("**Total no. of cycles played:**", len(df))
 ## Summary Statistics
 
 
-st.write('**Mean no of times game played**',np.mean(player_details['no_of_times_played']))
+st.write('**Mean number of cycles played by a player**',np.mean(player_details['no_of_times_played']))
 
-st.write('**Standard Deviation**',np.std(player_details['no_of_times_played']))
+st.write('**Standard Deviation of number of cycles played by players**',np.std(player_details['no_of_times_played']))
 
-st.write('**Median of no. of games played**',np.median(player_details['no_of_times_played']))
+st.write('**Median of number of cycles played by a player**',np.median(player_details['no_of_times_played']))
 
-st.write("**{} times ammo was preloaded exactly one time in a cycle**".format(len(df[df['No_of_times_ammo_preloaded'] == 1])))
-st.write("**{} times ammo was preloaded more than one time in a cycle**".format(len(df[df['No_of_times_ammo_preloaded'] > 1])))
+st.write('**25, 50 and 75 percentiles of number of cycles played by players**',np.percentile(player_details['no_of_times_played'],[25,50,75]))
+
+st.write("**{} times ammo was preloaded exactly one time in a cycle**".format(df[df['No_of_times_ammo_preloaded'] == 1]['player_id'].nunique()))
+st.write("**{} times ammo was preloaded more than one time in a cycle**".format(df[df['No_of_times_ammo_preloaded'] > 1]['player_id'].nunique()))
 
 #st.write(np.percentile(player_details['no_of_times_played'],[25,50,75])) percentile ka kya karenge isme :p
 
@@ -802,8 +804,8 @@ st.subheader("**Histogram for no. of games(cycles) played by players**")
 # Frequency Plot
 fig, ax = plt.subplots()
 plt.title('Frequency of playing')
-plt.xticks(np.arange(1, len(player_details)+1, 1),fontsize=10)
-plt.yticks(np.arange(1, max(player_details['no_of_times_played'])+1, 1))
+plt.xticks(np.arange(1, len(player_details)+1, 1),fontsize=8)
+plt.yticks(np.arange(1, max(player_details['no_of_times_played'])+1, 1),fontsize=8)
 sns.barplot(x='player_no',y='no_of_times_played',data=player_details,order=player_details.sort_values('no_of_times_played',ascending=False).player_no)
 plt.xlabel('Player ID')
 plt.ylabel('Number of Times Played')
@@ -853,7 +855,7 @@ df_response_obstacle.reset_index(inplace=True)
 def interactive_plot(df, title):
   fig = px.line( title = title + 'vs player no',)
 
-  for i in df.columns[1:]:
+  for i in df.columns[1:3]:
     fig.add_scatter(x = df['player_id'], y = df[i], name = i,connectgaps=True)
 
   fig.update_layout(
@@ -862,12 +864,12 @@ def interactive_plot(df, title):
   
   st.plotly_chart(fig)
 
-st.subheader("**A plot of Target Response Time(Time taken by player to hit the target) corresponding each player**")
-st.write("We have plotted two cycles, one is very first cycle of game played by the player, and the other is last cycle of game played by thr player")
+st.subheader("**A interactive plot of Target Response Time(Time taken by player to hit the target) corresponding each player**")
+st.write("We have plotted two cycles, one is very first cycle of game played by the player, and the other is last cycle of game played by the player")
 
 interactive_plot(df_response_target, 'Target Response Time(ms)')
 
-st.subheader("**A plot of Wall Distance(at wall distance player stopped the dragster) corresponding each player**")
+st.subheader("**A interactive plot of Wall Distance(at wall distance player stopped the dragster) corresponding each player**")
 interactive_plot(df_response_wall, 'Wall Response (distance)')
 
 mean_responses = df_grouped.mean()
@@ -928,6 +930,7 @@ ax.scatter(df['Cycle Level'],df['Total Score'], alpha = 0.5)
 st.pyplot(fig)
 
 st.subheader("**Overall Improvements**")
+st.write("In the plots given below, the more red value of a player is, the better is the improvement in response time/distance. And the more green value of a player is, the more is the response time/distance has increased.")
 def overall_change_bars(df,title):
   df1 = df.copy(deep=True)
   df1['Change'] = df1['Last Cycle'] - df1['First Cycle']
@@ -944,7 +947,9 @@ def overall_change_bars(df,title):
 
 # Decorations
   plt.gca().set(ylabel='$Player No$', xlabel='Change in {}'.format(title))
-  plt.yticks(df1.index, df1.player_id, fontsize=12)
+  plt.yticks(df1.index, df1.player_id, fontsize=13)
+  plt.xticks(fontsize=13)
+
   plt.title('Overall change in {} for each player'.format(title), fontdict={'size':20})
   plt.grid(linestyle='--', alpha=0.5)
   plt.xlim(min(df1['Change'])-1000, max(df1['Change'])+1000)
@@ -1027,7 +1032,7 @@ value_vs_cycle(df_game['Mean Explosion Response Time'])
 st.subheader("*A plot showing variation between Mean Target Response Distance and Mean Target Response time for player*")
 fig,ax = plt.subplots(1)
 sns.set()
-sns.lineplot(data=df_game,x= df_game['Mean Target Response Distance'],y=df_game['Mean Target Response Time'],hue="player_id",style="player_id",markers=["o"],palette='hot')
+sns.scatterplot(data=df_game,x= df_game['Mean Target Response Distance'],y=df_game['Mean Target Response Time'],hue="player_id",style="player_id",markers=["o"],palette='hot')
   #plt.xticks(np.arange(0, len(df_game)+1, 1))
 plt.margins(0.05)
 plt.xlabel("Mean Target Response Distance")
@@ -1256,7 +1261,7 @@ for i, player in df_joined.iterrows():
     # ax.set_facecolor("white")
   #st.pyplot(fig)
 
-
+####### MODEL PREDICTION #######
 st.write('**Mean change in response time due to preloading**', np.nanmean(mean_response_change))
 st.subheader("**Predictions**")
 #sum(df['No_of_correct_guesses'])/sum(df['No_of_times_ammo_preloaded'])*100
@@ -1264,7 +1269,9 @@ df_joined.set_index('Player_no',inplace=True)
 x_df = df_joined['Explosion_joined'][22]
 x_df = [j for j in x_df if j != None]
 explosion_df = pd.DataFrame({'Explosion_response_time' : x_df})
+
 from sklearn.preprocessing import MinMaxScaler
+
 scalar = MinMaxScaler(feature_range=(0,10))
 explosion_df = scalar.fit_transform(np.array(explosion_df).reshape(-1,1))
 trainig_size = int(len(explosion_df)*0.65)
@@ -1300,8 +1307,6 @@ model.compile(loss='mean_squared_error',optimizer='adam')
 model.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=100,batch_size=64,verbose=1)
 train_predict = model.predict(X_train)
 test_predict = model.predict(X_test)
-
-from sklearn.metrics import accuracy_score
 
 ## For getting actual answers
 
@@ -1344,7 +1349,7 @@ while(i<2):
         i=i+1
 st.write("Mean squared Error in test prediction",math.sqrt(mean_squared_error(y_test,test_predict)))
 for i in lst_output:
-  st.write("{} Predicted time: {}".format(lst_output.index(i)+1,i[0]*100))
+  st.write("{} Predicted time: {}".format(lst_output.index(i)+1,i[0]*1000))
 
   ## Ye 100 ya 1000 se multiply hogi values
 
