@@ -166,7 +166,7 @@ for j in range(len(states_length_objectspawn)):
 #How many times obstacle appeared and how many times it gets destroyed in a particular state
 
 
-# Time taken of each obstacle arrival and time taken for removing each obstacle
+#Time taken of each obstacle arrival and time taken for removing each obstacle
 #print(objectspawn_time,len(objectspawn_time),"\n")
 #print(obstacleremoved_time,len(obstacleremoved_time),"\n")
 
@@ -798,7 +798,7 @@ st.write('**25, 50 and 75 percentiles of number of cycles played by players**',n
 st.write("**{} times ammo was preloaded exactly one time in a cycle**".format(df[df['No_of_times_ammo_preloaded'] == 1]['player_id'].nunique()))
 st.write("**{} times ammo was preloaded more than one time in a cycle**".format(df[df['No_of_times_ammo_preloaded'] > 1]['player_id'].nunique()))
 
-#st.write(np.percentile(player_details['no_of_times_played'],[25,50,75])) percentile ka kya karenge isme :p
+#st.write(np.percentile(player_details['no_of_times_played'],[25,50,75]))
 
 st.subheader("**Histogram for no. of games(cycles) played by players**")
 # Frequency Plot
@@ -1188,12 +1188,6 @@ for key, item in df_grouped:
 
 
 
-#
-
-#Mike bola hai player par nhi, population par chahiye, isliye aise hi plot kar dete hain
-#x par cycle no. ho jayega, y par explosion, aur guess ke hisab se hue
-
-
 total_explosions = []
 total_guesses = []
 
@@ -1351,7 +1345,7 @@ st.write("Mean squared Error in test prediction",math.sqrt(mean_squared_error(y_
 for i in lst_output:
   st.write("{} Predicted time: {}".format(lst_output.index(i)+1,i[0]*1000))
 
-  ## Ye 100 ya 1000 se multiply hogi values
+
 
 
 
